@@ -29,7 +29,7 @@ const wagmiConfig = defaultWagmiConfig({
   metadata,
 });
 
-// Create React Query client with default configuration
+// Create React Query client
 const queryClient = new QueryClient();
 
 // Initialize web3modal
@@ -37,8 +37,8 @@ createWeb3Modal({ wagmiConfig, projectId, chains });
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiConfig config={wagmiConfig}>
+    <WagmiConfig config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
         <TooltipProvider>
           <Toaster />
           <Sonner />
@@ -50,8 +50,8 @@ const App = () => {
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
-      </WagmiConfig>
-    </QueryClientProvider>
+      </QueryClientProvider>
+    </WagmiConfig>
   );
 };
 
