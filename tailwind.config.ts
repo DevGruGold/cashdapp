@@ -28,7 +28,9 @@ export default {
           green: "#00D632",
           black: "#000000",
           gray: "#1F1F1F",
-          "light-gray": "#2D2D2D"
+          "light-gray": "#2D2D2D",
+          "accent-green": "#1B9A3E",
+          "hover-gray": "#363636"
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",

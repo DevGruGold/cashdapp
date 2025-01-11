@@ -30,26 +30,26 @@ const transactions = [
 
 export const TransactionHistory = () => {
   return (
-    <Card className="p-6 bg-cashdapp-gray mt-6 animate-slide-up">
-      <h2 className="text-xl font-bold mb-4">Recent Transactions</h2>
+    <Card className="p-8 bg-cashdapp-gray rounded-2xl animate-slide-up">
+      <h2 className="text-2xl font-bold mb-6">Recent Transactions</h2>
       <div className="space-y-4">
         {transactions.map((tx) => (
-          <div key={tx.id} className="flex items-center justify-between p-4 bg-cashdapp-light-gray rounded-lg">
+          <div key={tx.id} className="flex items-center justify-between p-5 bg-cashdapp-light-gray rounded-xl hover:bg-cashdapp-hover-gray transition-colors cursor-pointer">
             <div className="flex items-center gap-4">
-              <div className={`p-2 rounded-full ${tx.type === 'send' ? 'bg-red-500/20' : 'bg-green-500/20'}`}>
+              <div className={`p-3 rounded-full ${tx.type === 'send' ? 'bg-red-500/20' : 'bg-green-500/20'}`}>
                 {tx.type === 'send' ? (
-                  <ArrowUpRight className="w-5 h-5 text-red-500" />
+                  <ArrowUpRight className="w-6 h-6 text-red-500" />
                 ) : (
-                  <ArrowDownLeft className="w-5 h-5 text-green-500" />
+                  <ArrowDownLeft className="w-6 h-6 text-green-500" />
                 )}
               </div>
               <div>
-                <p className="font-semibold">{tx.type === 'send' ? 'Sent' : 'Received'}</p>
+                <p className="font-semibold text-lg">{tx.type === 'send' ? 'Sent' : 'Received'}</p>
                 <p className="text-sm text-gray-400">{tx.address}</p>
               </div>
             </div>
             <div className="text-right">
-              <p className={`font-semibold ${tx.type === 'send' ? 'text-red-500' : 'text-green-500'}`}>
+              <p className={`font-semibold text-lg ${tx.type === 'send' ? 'text-red-500' : 'text-green-500'}`}>
                 {tx.amount}
               </p>
               <p className="text-sm text-gray-400">{tx.date}</p>
