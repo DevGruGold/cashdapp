@@ -6,7 +6,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
 import { WagmiConfig } from 'wagmi';
 import { arbitrum, mainnet } from 'viem/chains';
-import { createClient } from '@supabase/supabase-js';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import Index from "./pages/Index";
 import BuyCrypto from "./pages/BuyCrypto";
@@ -41,9 +40,9 @@ createWeb3Modal({ wagmiConfig, projectId, chains });
 
 const App = () => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <SessionContextProvider supabaseClient={supabase}>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <WagmiConfig config={wagmiConfig}>
+        <SessionContextProvider supabaseClient={supabase}>
           <TooltipProvider>
             <Toaster />
             <Sonner />
@@ -77,9 +76,9 @@ const App = () => {
               </Routes>
             </BrowserRouter>
           </TooltipProvider>
-        </QueryClientProvider>
-      </SessionContextProvider>
-    </WagmiConfig>
+        </SessionContextProvider>
+      </WagmiConfig>
+    </QueryClientProvider>
   );
 };
 
