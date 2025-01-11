@@ -1,7 +1,8 @@
 import { Header } from "@/components/Header";
 import { Balance } from "@/components/Balance";
 import { TransactionHistory } from "@/components/TransactionHistory";
-import { Onramper } from "@/components/Onramper";
+import { TapToPay } from "@/components/TapToPay";
+import { SecureCircle } from "@/components/SecureCircle";
 
 const Index = () => {
   return (
@@ -10,7 +11,8 @@ const Index = () => {
         <Header />
         <main className="px-4 py-6 space-y-6">
           <Balance />
-          <Onramper />
+          <TapToPay />
+          <SecureCircle />
           <TransactionHistory />
         </main>
       </div>
