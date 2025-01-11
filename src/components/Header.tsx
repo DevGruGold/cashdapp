@@ -1,6 +1,5 @@
 import { Bell, Settings } from "lucide-react";
-import { w3mConnectors, w3mProvider } from '@web3modal/ethereum'
-import { useWeb3Modal } from '@web3modal/wagmi/react'
+import { useWeb3Modal } from '@web3modal/wagmi/react';
 
 export const Header = () => {
   const { open } = useWeb3Modal();
