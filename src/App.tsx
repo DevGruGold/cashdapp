@@ -4,15 +4,12 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
-import { WagmiConfig } from 'wagmi';
+import { WagmiConfig, useAccount } from 'wagmi';
 import { arbitrum, mainnet } from 'viem/chains';
-import { SessionContextProvider } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
 import Index from "./pages/Index";
 import BuyCrypto from "./pages/BuyCrypto";
 import Bridge from "./pages/Bridge";
-import Auth from "./pages/Auth";
-import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 // Project configuration
@@ -40,60 +37,48 @@ const queryClient = new QueryClient();
 // Initialize web3modal
 createWeb3Modal({ wagmiConfig, projectId, chains });
 
-// RequireAuth component to protect routes
-const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+// RequireWeb3Auth component to protect routes
+const RequireWeb3Auth = ({ children }: { children: React.ReactNode }) => {
+  const { isConnected } = useAccount();
   const [isInitialized, setIsInitialized] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const initializeAuth = async () => {
+    const initializeWallet = async () => {
       try {
         // First check - initialization
-        const { data: { session: initialSession }, error: initialError } = await supabase.auth.getSession();
-        
-        if (initialError) {
-          toast.error("Error checking authentication status");
-          return;
+        if (isConnected) {
+          setIsInitialized(true);
+          
+          // Second check - verification
+          // Small delay to ensure proper initialization
+          setTimeout(() => {
+            if (isConnected) {
+              setIsVerified(true);
+              toast.success("Wallet connected successfully!");
+            }
+            setIsLoading(false);
+          }, 1000);
+        } else {
+          setIsLoading(false);
         }
-
-        if (initialSession) {
-          setIsAuthenticated(true);
-        }
-
-        // Second check - verify session
-        const { data: { session: verifiedSession }, error: verifyError } = await supabase.auth.getSession();
-        
-        if (verifyError) {
-          toast.error("Error verifying session");
-          return;
-        }
-
-        setIsAuthenticated(!!verifiedSession);
-        setIsInitialized(true);
       } catch (error) {
-        console.error("Auth initialization error:", error);
-        toast.error("Error initializing authentication");
-      } finally {
+        console.error("Wallet initialization error:", error);
+        toast.error("Error connecting wallet");
         setIsLoading(false);
       }
     };
 
-    initializeAuth();
+    initializeWallet();
+  }, [isConnected]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAuthenticated(!!session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  if (isLoading || !isInitialized) {
+  if (isLoading) {
     return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/auth" replace />;
+  if (!isInitialized || !isVerified) {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
@@ -103,41 +88,31 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiConfig config={wagmiConfig}>
-        <SessionContextProvider supabaseClient={supabase}>
-          <TooltipProvider>
-            <Toaster />
-            <Sonner />
-            <BrowserRouter>
-              <Routes>
-                <Route path="/auth" element={<Auth />} />
-                <Route
-                  path="/"
-                  element={
-                    <RequireAuth>
-                      <Index />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/buy"
-                  element={
-                    <RequireAuth>
-                      <BuyCrypto />
-                    </RequireAuth>
-                  }
-                />
-                <Route
-                  path="/bridge"
-                  element={
-                    <RequireAuth>
-                      <Bridge />
-                    </RequireAuth>
-                  }
-                />
-              </Routes>
-            </BrowserRouter>
-          </TooltipProvider>
-        </SessionContextProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route
+                path="/buy"
+                element={
+                  <RequireWeb3Auth>
+                    <BuyCrypto />
+                  </RequireWeb3Auth>
+                }
+              />
+              <Route
+                path="/bridge"
+                element={
+                  <RequireWeb3Auth>
+                    <Bridge />
+                  </RequireWeb3Auth>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
       </WagmiConfig>
     </QueryClientProvider>
   );
