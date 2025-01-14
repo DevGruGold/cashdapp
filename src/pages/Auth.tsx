@@ -3,6 +3,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { toast } from "sonner";
 
 const Auth = () => {
   const navigate = useNavigate();
@@ -12,7 +13,27 @@ const Auth = () => {
       if (event === 'SIGNED_IN' && session) {
         navigate('/');
       }
+      if (event === 'USER_UPDATED') {
+        toast.success('Successfully signed in!');
+      }
+      if (event === 'SIGNED_OUT') {
+        toast.info('Signed out');
+      }
     });
+
+    // Check if user is already signed in
+    const checkSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (session) {
+        navigate('/');
+      }
+    };
+
+    checkSession();
 
     return () => subscription.unsubscribe();
   }, [navigate]);

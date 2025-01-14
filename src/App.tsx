@@ -13,6 +13,7 @@ import BuyCrypto from "./pages/BuyCrypto";
 import Bridge from "./pages/Bridge";
 import Auth from "./pages/Auth";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // Project configuration
 const projectId = '6054bd6688c6860ed806775db1c24f15';
@@ -43,27 +44,52 @@ createWeb3Modal({ wagmiConfig, projectId, chains });
 const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        setIsAuthenticated(true);
+    const initializeAuth = async () => {
+      try {
+        // First check - initialization
+        const { data: { session: initialSession }, error: initialError } = await supabase.auth.getSession();
+        
+        if (initialError) {
+          toast.error("Error checking authentication status");
+          return;
+        }
+
+        if (initialSession) {
+          setIsAuthenticated(true);
+        }
+
+        // Second check - verify session
+        const { data: { session: verifiedSession }, error: verifyError } = await supabase.auth.getSession();
+        
+        if (verifyError) {
+          toast.error("Error verifying session");
+          return;
+        }
+
+        setIsAuthenticated(!!verifiedSession);
+        setIsInitialized(true);
+      } catch (error) {
+        console.error("Auth initialization error:", error);
+        toast.error("Error initializing authentication");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
+
+    initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
     });
 
-    checkAuth();
-
     return () => subscription.unsubscribe();
   }, []);
 
-  if (isLoading) {
-    return <div>Loading...</div>;
+  if (isLoading || !isInitialized) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
 
   if (!isAuthenticated) {
