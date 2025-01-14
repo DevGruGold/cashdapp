@@ -47,12 +47,9 @@ const RequireWeb3Auth = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const initializeWallet = async () => {
       try {
-        // First check - initialization
         if (isConnected) {
           setIsInitialized(true);
           
-          // Second check - verification
-          // Small delay to ensure proper initialization
           setTimeout(() => {
             if (isConnected) {
               setIsVerified(true);
@@ -87,8 +84,8 @@ const RequireWeb3Auth = ({ children }: { children: React.ReactNode }) => {
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiConfig config={wagmiConfig}>
-        <TooltipProvider>
+      <TooltipProvider>
+        <WagmiConfig config={wagmiConfig}>
           <Toaster />
           <Sonner />
           <BrowserRouter>
@@ -112,8 +109,8 @@ const App = () => {
               />
             </Routes>
           </BrowserRouter>
-        </TooltipProvider>
-      </WagmiConfig>
+        </WagmiConfig>
+      </TooltipProvider>
     </QueryClientProvider>
   );
 };
