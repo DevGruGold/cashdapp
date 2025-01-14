@@ -12,7 +12,6 @@ import BuyCrypto from "./pages/BuyCrypto";
 import Bridge from "./pages/Bridge";
 import { toast } from "sonner";
 
-// Project configuration
 const projectId = '6054bd6688c6860ed806775db1c24f15';
 const metadata = {
   name: 'CashDapp',
@@ -21,23 +20,12 @@ const metadata = {
   icons: ['https://avatars.githubusercontent.com/u/37784886']
 };
 
-// Setup chains
 const chains = [mainnet, arbitrum];
-
-// Create wagmi config
-const wagmiConfig = defaultWagmiConfig({
-  chains,
-  projectId,
-  metadata,
-});
-
-// Create React Query client
+const wagmiConfig = defaultWagmiConfig({ chains, projectId, metadata });
 const queryClient = new QueryClient();
 
-// Initialize web3modal
 createWeb3Modal({ wagmiConfig, projectId, chains });
 
-// RequireWeb3Auth component to protect routes
 const RequireWeb3Auth = ({ children }: { children: React.ReactNode }) => {
   const { isConnected } = useAccount();
   const [isInitialized, setIsInitialized] = useState(false);
@@ -71,7 +59,11 @@ const RequireWeb3Auth = ({ children }: { children: React.ReactNode }) => {
   }, [isConnected]);
 
   if (isLoading) {
-    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-cashdapp-green"></div>
+      </div>
+    );
   }
 
   if (!isInitialized || !isVerified) {
@@ -86,29 +78,31 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WagmiConfig config={wagmiConfig}>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route
-                path="/buy"
-                element={
-                  <RequireWeb3Auth>
-                    <BuyCrypto />
-                  </RequireWeb3Auth>
-                }
-              />
-              <Route
-                path="/bridge"
-                element={
-                  <RequireWeb3Auth>
-                    <Bridge />
-                  </RequireWeb3Auth>
-                }
-              />
-            </Routes>
-          </BrowserRouter>
+          <div className="min-h-screen bg-black">
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route
+                  path="/buy"
+                  element={
+                    <RequireWeb3Auth>
+                      <BuyCrypto />
+                    </RequireWeb3Auth>
+                  }
+                />
+                <Route
+                  path="/bridge"
+                  element={
+                    <RequireWeb3Auth>
+                      <Bridge />
+                    </RequireWeb3Auth>
+                  }
+                />
+              </Routes>
+            </BrowserRouter>
+          </div>
         </WagmiConfig>
       </TooltipProvider>
     </QueryClientProvider>

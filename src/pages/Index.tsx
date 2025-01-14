@@ -9,7 +9,7 @@ const Index = () => {
     <div className="min-h-screen bg-black text-white">
       <div className="container mx-auto max-w-5xl">
         <Header />
-        <main className="px-4 py-6 space-y-6">
+        <main className="px-4 py-4 md:py-6 space-y-4 md:space-y-6">
           <Balance />
           <TapToPay />
           <SecureCircle />
