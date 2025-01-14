@@ -7,6 +7,7 @@ import { createWeb3Modal, defaultWagmiConfig } from '@web3modal/wagmi/react';
 import { WagmiConfig } from 'wagmi';
 import { arbitrum, mainnet } from 'viem/chains';
 import { SessionContextProvider } from '@supabase/auth-helpers-react';
+import { useEffect, useState } from 'react';
 import Index from "./pages/Index";
 import BuyCrypto from "./pages/BuyCrypto";
 import Bridge from "./pages/Bridge";
@@ -37,6 +38,40 @@ const queryClient = new QueryClient();
 
 // Initialize web3modal
 createWeb3Modal({ wagmiConfig, projectId, chains });
+
+// RequireAuth component to protect routes
+const RequireAuth = ({ children }: { children: React.ReactNode }) => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
+        setIsAuthenticated(true);
+      }
+      setIsLoading(false);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(!!session);
+    });
+
+    checkAuth();
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return <Navigate to="/auth" replace />;
+  }
+
+  return <>{children}</>;
+};
 
 const App = () => {
   return (
@@ -80,17 +115,6 @@ const App = () => {
       </WagmiConfig>
     </QueryClientProvider>
   );
-};
-
-// RequireAuth component to protect routes
-const RequireAuth = ({ children }: { children: React.ReactNode }) => {
-  const session = supabase.auth.getSession();
-  
-  if (!session) {
-    return <Navigate to="/auth" replace />;
-  }
-
-  return <>{children}</>;
 };
 
 export default App;
