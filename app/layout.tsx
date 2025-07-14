@@ -11,7 +11,7 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "CashDapp",
+  title: "XMRT CashDapp",
   description: "Your Mobile Gateway to Monero and the XMRT DAO Ecosystem.",
     generator: 'v0.dev'
 }
