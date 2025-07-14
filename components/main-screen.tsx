@@ -9,9 +9,12 @@ import { AddFundsDialog } from "@/components/add-funds-dialog"
 import { useUser } from "@/components/user-provider"
 import { TokenizeAssetDialog } from "@/components/tokenize-asset-dialog"
 import { useLanguage } from "./language-provider"
+import { useWallet } from "./wallet-provider"
+import { formatAddress } from "@/lib/utils"
 
 export function MainScreen() {
   const { currentUser } = useUser()
+  const { isConnected, address, balance, chainId } = useWallet()
   const [showSendDialog, setShowSendDialog] = useState(false)
   const [showRequestDialog, setShowRequestDialog] = useState(false)
   const [showAddFundsDialog, setShowAddFundsDialog] = useState(false)
@@ -23,6 +26,19 @@ export function MainScreen() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{t("nav.home")}</h1>
       </div>
+
+      {isConnected && (
+        <Card className="bg-green-500/10 border-green-500">
+          <CardHeader>
+            <CardTitle>Wallet Connected</CardTitle>
+            <CardDescription>Address: {address && formatAddress(address)}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">Balance: ${balance}</div>
+            <div className="text-sm text-muted-foreground">Chain ID: {chainId}</div>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="bg-primary/10 border-primary">
         <CardHeader>
@@ -110,3 +126,5 @@ export function MainScreen() {
     </div>
   )
 }
+
+
