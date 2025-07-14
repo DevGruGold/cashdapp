@@ -12,7 +12,7 @@ const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: "CashDapp",
-  description: "Cross-chain compatible payment application",
+  description: "Your Mobile Gateway to Monero and the XMRT DAO Ecosystem.",
     generator: 'v0.dev'
 }
 
@@ -23,6 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" href="/favicon.png" />
+      </head>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
           <WalletProvider>
@@ -38,3 +41,5 @@ export default function RootLayout({
     </html>
   )
 }
+
+
