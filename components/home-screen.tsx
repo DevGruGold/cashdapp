@@ -13,7 +13,6 @@ import { useUser } from "@/components/user-provider"
 import { LoginScreen } from "@/components/login-screen"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useLanguage } from "./language-provider"
-import { AppHeader } from "./app-header"
 
 export function HomeScreen() {
   const [activeTab, setActiveTab] = useState("home")
@@ -50,7 +49,6 @@ export function HomeScreen() {
 
   return (
     <div className="flex flex-col min-h-screen w-full max-w-md mx-auto">
-      <AppHeader />
       <Tabs
         defaultValue="home"
         value={activeTab}

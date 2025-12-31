@@ -57,3 +57,52 @@
     @apply bg-background text-foreground;
   }
 }
+
+/* Custom styles */
+.card-hover {
+  @apply transition-all duration-200 hover:shadow-md hover:-translate-y-1;
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.8) 100%);
+}
+
+.glass-effect {
+  @apply bg-background/80 backdrop-blur-sm border border-border/50;
+}
+
+/* Animation utilities */
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .mobile-padding {
+    @apply px-4;
+  }
+}

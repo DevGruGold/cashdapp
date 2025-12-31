@@ -74,6 +74,8 @@ export function TokenizeAssetDialog({ open, onOpenChange, assetType }: TokenizeA
         return "Document"
       case "valuable":
         return "Valuable"
+      default:
+        return "Asset" // Add a default case to prevent undefined
     }
   }
 
@@ -113,7 +115,7 @@ export function TokenizeAssetDialog({ open, onOpenChange, assetType }: TokenizeA
             <Label htmlFor="asset-name">Asset Name</Label>
             <Input
               id="asset-name"
-              placeholder={`Enter ${getAssetTypeLabel().toLowerCase()} name`}
+              placeholder={`Enter ${getAssetTypeLabel()?.toLowerCase() || "asset"} name`}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
@@ -123,7 +125,7 @@ export function TokenizeAssetDialog({ open, onOpenChange, assetType }: TokenizeA
             <Label htmlFor="asset-description">Description</Label>
             <Textarea
               id="asset-description"
-              placeholder={`Describe your ${getAssetTypeLabel().toLowerCase()}`}
+              placeholder={`Describe your ${getAssetTypeLabel()?.toLowerCase() || "asset"}`}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}

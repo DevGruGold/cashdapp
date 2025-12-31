@@ -3,17 +3,17 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
-import { WalletProvider } from "@/components/wallet-provider"
+import { Toaster } from "@/components/ui/toaster"
 import { UserProvider } from "@/components/user-provider"
 import { LanguageProvider } from "@/components/language-provider"
-import { Toaster } from "@/components/ui/toaster"
+import { Web3AuthProvider } from "@/components/web3auth-provider"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "XMRT CashDapp",
-  description: "Your Mobile Gateway to Monero and the XMRT DAO Ecosystem.",
-    generator: 'v0.dev'
+  title: "CashDapp - Web3 Payment App",
+  description: "Digital payment app with crypto and traditional banking features on Sepolia testnet",
+    generator: 'v0.app'
 }
 
 export default function RootLayout({
@@ -23,23 +23,18 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="icon" href="/favicon.png" />
-      </head>
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
-          <WalletProvider>
-            <UserProvider>
-              <LanguageProvider>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <Web3AuthProvider>
+            <LanguageProvider>
+              <UserProvider>
                 {children}
                 <Toaster />
-              </LanguageProvider>
-            </UserProvider>
-          </WalletProvider>
+              </UserProvider>
+            </LanguageProvider>
+          </Web3AuthProvider>
         </ThemeProvider>
       </body>
     </html>
   )
 }
-
-

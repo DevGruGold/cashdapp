@@ -27,9 +27,6 @@ const WalletContext = createContext<WalletContextType>({
   switchChain: async () => {},
 })
 
-// Sepolia Testnet Chain ID
-const SEPOLIA_CHAIN_ID = 11155111
-
 export function WalletProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false)
   const [address, setAddress] = useState<string | null>(null)
@@ -61,13 +58,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       if (accounts.length > 0) {
         setAddress(accounts[0])
         setIsConnected(true)
-        const currentChainId = Number.parseInt(chainIdHex, 16)
-        setChainId(currentChainId)
-
-        // Automatically switch to Sepolia if not already on it
-        if (currentChainId !== SEPOLIA_CHAIN_ID) {
-          await switchChain(SEPOLIA_CHAIN_ID)
-        }
+        setChainId(Number.parseInt(chainIdHex, 16))
 
         // Get balance
         const balanceHex = await window.ethereum.request({
@@ -154,7 +145,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
       window.ethereum.on("accountsChanged", handleAccountsChanged)
       window.ethereum.on("chainChanged", handleChainChanged)
 
-      // Check if already connected and connect if so
+      // Check if already connected
       window.ethereum
         .request({ method: "eth_accounts" })
         .then((accounts: string[]) => {
@@ -192,5 +183,3 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 }
 
 export const useWallet = () => useContext(WalletContext)
-
-

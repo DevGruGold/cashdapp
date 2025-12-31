@@ -9,7 +9,6 @@ import { useUser } from "./user-provider"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useLanguage } from "./language-provider"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { WalletConnectButton } from "./wallet-connect-button"
 
 export function AppHeader() {
   const { currentUser } = useUser()
@@ -121,8 +120,6 @@ export function AppHeader() {
             </Select>
           </div>
 
-          <WalletConnectButton variant="outline" size="sm" />
-
           <Button variant="ghost" size="icon" className="relative">
             <Bell className="h-5 w-5" />
             <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-red-500"></span>
@@ -138,5 +135,3 @@ export function AppHeader() {
     </header>
   )
 }
-
-

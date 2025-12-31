@@ -1,14 +1,12 @@
 "use client"
-
-import { useState } from "react"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { TokenizeAssetDialog } from "@/components/tokenize-asset-dialog"
 import { useLanguage } from "./language-provider"
+import { useRouter } from "next/navigation"
 
 export function AssetsScreen() {
-  const [showTokenizeDialog, setShowTokenizeDialog] = useState(false)
   const { t } = useLanguage()
+  const router = useRouter()
 
   // Mock assets data
   const assets = [
@@ -39,7 +37,7 @@ export function AssetsScreen() {
     <div className="flex flex-col min-h-screen p-4 space-y-4 pb-20">
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">{t("assets.title")}</h1>
-        <Button onClick={() => setShowTokenizeDialog(true)}>{t("assets.tokenize")}</Button>
+        <Button onClick={() => router.push("/tokenize")}>{t("assets.tokenize")}</Button>
       </div>
 
       <div className="space-y-4">
@@ -74,8 +72,6 @@ export function AssetsScreen() {
           </Card>
         )}
       </div>
-
-      {showTokenizeDialog && <TokenizeAssetDialog open={showTokenizeDialog} onOpenChange={setShowTokenizeDialog} />}
     </div>
   )
 }
