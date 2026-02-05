@@ -11,12 +11,24 @@ import { Loader2, Upload, ArrowLeft } from "lucide-react"
 import { Textarea } from "@/components/ui/textarea"
 import { useRouter } from "next/navigation"
 import { useLanguage } from "./language-provider"
+import { ethers } from "ethers"
+
+// Simple ABI for the RealEstateToken contract (tokenizeProperty function)
+const CONTRACT_ABI = [
+  "function tokenizeProperty(address to, string memory tokenURI, string memory _location, uint256 _valuation, uint256 _sqft, string memory _documentHash) public returns (uint256)"
+];
+const CONTRACT_ADDRESS = "0x..."; // Replace with deployed address
 
 export function TokenizeScreen() {
   const [name, setName] = useState("")
   const [description, setDescription] = useState("")
   const [value, setValue] = useState("")
   const [type, setType] = useState<string>("property")
+
+  // Real Estate Specific Fields
+  const [location, setLocation] = useState("")
+  const [sqft, setSqft] = useState("")
+
   const [isLoading, setIsLoading] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
@@ -35,19 +47,44 @@ export function TokenizeScreen() {
     setIsLoading(true)
 
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      if (type === 'property' && window.ethereum) {
+        // Smart Contract Interaction for Property
+        const provider = new ethers.providers.Web3Provider(window.ethereum as any);
+        const signer = provider.getSigner();
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
 
-      toast({
-        title: t("assets.tokenizeSuccess"),
-        description: t("assets.tokenizeSuccessDesc"),
-      })
+        // Mock IPFS hash/URI for now
+        const docHash = "QmHash...";
+        const tokenURI = "ipfs://QmMetadata...";
+
+        const tx = await contract.tokenizeProperty(
+          await signer.getAddress(),
+          tokenURI,
+          location,
+          ethers.utils.parseEther(value),
+          sqft || 0,
+          docHash
+        );
+        await tx.wait();
+        toast({
+          title: "On-Chain Success",
+          description: "Property Tokenized on Blockchain!",
+        })
+      } else {
+        // Simulate API call for other types
+        await new Promise((resolve) => setTimeout(resolve, 2000))
+        toast({
+          title: t("assets.tokenizeSuccess"),
+          description: t("assets.tokenizeSuccessDesc"),
+        })
+      }
 
       router.push("/banking?tab=assets")
     } catch (error) {
+      console.error(error);
       toast({
         title: t("assets.tokenizeFailed"),
-        description: t("assets.tokenizeFailedDesc"),
+        description: error.message || t("assets.tokenizeFailedDesc"),
         variant: "destructive",
       })
     } finally {
@@ -107,6 +144,30 @@ export function TokenizeScreen() {
                 </SelectContent>
               </Select>
             </div>
+
+            {type === 'property' && (
+              <>
+                <div className="space-y-2">
+                  <Label htmlFor="asset-location">Property Location</Label>
+                  <Input
+                    id="asset-location"
+                    placeholder="123 Blockchain Blvd"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="asset-sqft">Square Footage</Label>
+                  <Input
+                    id="asset-sqft"
+                    type="number"
+                    placeholder="2500"
+                    value={sqft}
+                    onChange={(e) => setSqft(e.target.value)}
+                  />
+                </div>
+              </>
+            )}
 
             <div className="space-y-2">
               <Label htmlFor="asset-name">{t("assets.assetName")}</Label>
